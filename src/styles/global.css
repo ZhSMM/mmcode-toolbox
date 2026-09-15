@@ -1,0 +1,174 @@
+:root {
+  --layout-bg: #f5f7fa;
+  --panel-bg: #ffffff;
+  --border-color: #e4e7ed;
+  --text-primary: #303133;
+  --text-secondary: #606266;
+}
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--layout-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--el-color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* 让 Element Plus 默认主题色与本项目协调 */
+:root {
+  --el-color-primary: #409eff;
+}
+
+/* 通用页面容器 */
+.page {
+  height: 100%;
+  padding: 16px;
+  overflow: auto;
+}
+
+/* 输入/输出区文本框统一为等宽字体 */
+.mono-input textarea {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace !important;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 工具面板 */
+.tool-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  gap: 12px;
+  overflow: hidden;
+}
+.tool-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+}
+.tool-panel__head h2 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+}
+.tool-panel__head .desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.tool-panel__body {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+.tool-panel__pane {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.tool-panel__pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: #fafbfc;
+  flex: 0 0 auto;
+}
+.tool-panel__pane-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.tool-panel__options {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+.tool-panel__options .el-button + .el-button {
+  margin-left: 0;
+}
+
+/* 主布局 */
+.app-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.app-side {
+  width: 240px;
+  flex: 0 0 240px;
+  background: #001529;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.app-side__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.app-side__menu {
+  flex: 1 1 auto;
+  overflow: auto;
+  border-right: none !important;
+}
+.app-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--layout-bg);
+}
+.app-header {
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+}
+.app-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
