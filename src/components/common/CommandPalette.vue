@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/stores/app';
 import { copyText } from '@/utils/format';
+import { applyTheme } from '@/utils/theme';
 import { ElMessage } from 'element-plus';
 
 /**
@@ -122,19 +123,6 @@ const toggleTheme = () => {
   const next = cur === 'system' ? 'light' : cur === 'light' ? 'dark' : 'system';
   applyTheme(next);
   ElMessage.success('主题: ' + (next === 'system' ? '跟随系统' : next === 'light' ? '浅色' : '深色'));
-};
-
-export const applyTheme = (mode: 'system' | 'light' | 'dark') => {
-  localStorage.setItem('mmcode-theme', mode);
-  const el = document.documentElement;
-  el.classList.remove('theme-light', 'theme-dark');
-  if (mode === 'light') el.classList.add('theme-light');
-  else if (mode === 'dark') el.classList.add('theme-dark');
-  else {
-    // system:跟随系统
-    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    el.classList.add(dark ? 'theme-dark' : 'theme-light');
-  }
 };
 
 onMounted(() => {

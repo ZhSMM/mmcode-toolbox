@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import SideMenu from './SideMenu.vue';
 import CommandPalette from '@/components/common/CommandPalette.vue';
 import { useAppStore } from '@/stores/app';
+import { applyTheme, type ThemeMode } from '@/utils/theme';
 
 const route = useRoute();
 const router = useRouter();
@@ -29,23 +30,12 @@ const commandPaletteRef = ref<InstanceType<typeof CommandPalette> | null>(null);
 const openPalette = () => commandPaletteRef.value?.open();
 
 // 主题
-const theme = ref<'system' | 'light' | 'dark'>((localStorage.getItem('mmcode-theme') as any) || 'system');
+const theme = ref<ThemeMode>((localStorage.getItem('mmcode-theme') as ThemeMode) || 'system');
 const cycleTheme = () => {
-  const order: Array<'system' | 'light' | 'dark'> = ['system', 'light', 'dark'];
+  const order: ThemeMode[] = ['system', 'light', 'dark'];
   const i = order.indexOf(theme.value);
   theme.value = order[(i + 1) % order.length];
   applyTheme(theme.value);
-};
-const applyTheme = (mode: 'system' | 'light' | 'dark') => {
-  localStorage.setItem('mmcode-theme', mode);
-  const el = document.documentElement;
-  el.classList.remove('theme-light', 'theme-dark');
-  if (mode === 'light') el.classList.add('theme-light');
-  else if (mode === 'dark') el.classList.add('theme-dark');
-  else {
-    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    el.classList.add(dark ? 'theme-dark' : 'theme-light');
-  }
 };
 const themeIcon = computed(() => theme.value === 'dark' ? 'Moon' : theme.value === 'light' ? 'Sunny' : 'Sunny');
 const themeLabel = computed(() => theme.value === 'system' ? '跟随系统' : theme.value === 'light' ? '浅色' : '深色');
