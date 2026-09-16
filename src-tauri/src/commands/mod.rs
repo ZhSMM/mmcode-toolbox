@@ -1,11 +1,32 @@
 //! 所有 Tauri command 的注册中心。
 //!
-//! 注意:`#[tauri::command]` 会在函数所在模块生成 `__cmd__<name>` 符号,
-//! `tauri::generate_handler!` 用路径查找它。不要 `pub use` 重导出函数本身,
-//! 否则宏定位不到 `__cmd__`。在 lib.rs 中用完整路径 `commands::<sub>::<fn>`。
+//! `#[tauri::command]` 在函数所在模块生成 `__cmd__<name>`,lib.rs 用完整路径
+//! `commands::<sub>::<fn>` 引用,以便 `tauri::generate_handler!` 能找到。
 
+pub mod aes;
 pub mod base64;
+pub mod base_n;
+pub mod cidr;
+pub mod color;
+pub mod cron;
+pub mod csv_viewer;
+pub mod diff;
 pub mod favorites;
+pub mod hex;
 pub mod history;
+pub mod hmac;
 pub mod json_fmt;
+pub mod jwt;
+pub mod markdown;
+pub mod md5;
+pub mod password;
+pub mod qrcode;
+pub mod random;
+pub mod regex;
+pub mod sha;
+pub mod sql_format;
+pub mod string_stats;
+pub mod timestamp;
 pub mod tools;
+pub mod url_codec;
+pub mod uuid;

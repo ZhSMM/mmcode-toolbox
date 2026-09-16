@@ -1,6 +1,6 @@
 [package]
 name = "mmcode-toolbox"
-version = "0.1.0"
+version = "0.2.0"
 description = "Mavis Code Toolbox - 开发者桌面工具集"
 authors = ["Mavis"]
 edition = "2021"
@@ -27,9 +27,39 @@ env_logger = "0.11"
 chrono = { version = "0.4", features = ["serde"] }
 once_cell = "1"
 
+# 文本 / 编解码 / 散列
+percent-encoding = "2.3"
+hex = "0.4"
+regex = "1.10"
+similar = "2.5"
+md-5 = "0.10"
+sha1 = "0.10"
+sha2 = "0.10"
+hmac = "0.12"
+digest = "0.10"
+
+# 生成器
+uuid = { version = "1.8", features = ["v4", "v7"] }
+rand = "0.8"
+qrcode = "0.14"
+
+# 加解密
+aes-gcm = "0.10"
+
+# 数据 / 文档
+csv = "1.3"
+pulldown-cmark = "0.10"
+
+# Web / 编码
+jsonwebtoken = "9.2"
+sqlformat = "0.2"
+bs58 = "0.5"
+data-encoding = "2"
+
+# 网络
+ipnetwork = "0.20"
+
 [features]
-# this feature is used for production builds or when `devUrl` points to the filesystem
-# DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
 
 [profile.release]

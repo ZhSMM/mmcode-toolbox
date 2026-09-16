@@ -6,6 +6,44 @@
   --text-secondary: #606266;
 }
 
+/* ===== 主题 ===== */
+/* 默认 light */
+html.theme-light {
+  --layout-bg: #f5f7fa;
+  --panel-bg: #ffffff;
+  --border-color: #e4e7ed;
+  --text-primary: #303133;
+  --text-secondary: #606266;
+}
+html.theme-dark {
+  --layout-bg: #1e1e1e;
+  --panel-bg: #2a2a2a;
+  --border-color: #3a3a3a;
+  --text-primary: #e4e7ed;
+  --text-secondary: #a0a0a0;
+  color-scheme: dark;
+}
+
+html.theme-dark body { background: var(--layout-bg); color: var(--text-primary); }
+html.theme-dark .app-side { background: #141414; }
+html.theme-dark .app-header,
+html.theme-dark .app-side__menu,
+html.theme-dark .tool-panel__pane,
+html.theme-dark .el-card,
+html.theme-dark .el-drawer,
+html.theme-dark .el-dialog { background: var(--panel-bg) !important; color: var(--text-primary); }
+html.theme-dark .el-input__wrapper,
+html.theme-dark .el-textarea__inner { background: #1e1e1e !important; color: var(--text-primary); border-color: var(--border-color) !important; }
+html.theme-dark .el-card { border-color: var(--border-color) !important; }
+html.theme-dark .el-card.is-always-shadow { box-shadow: 0 0 12px rgba(0,0,0,.3) !important; }
+html.theme-dark .el-table { background: var(--panel-bg) !important; color: var(--text-primary); }
+html.theme-dark .el-table tr,
+html.theme-dark .el-table th.el-table__cell { background: var(--panel-bg) !important; color: var(--text-primary); border-color: var(--border-color) !important; }
+html.theme-dark .el-table--border .el-table__cell,
+html.theme-dark .el-table--border { border-color: var(--border-color) !important; }
+html.theme-dark code { background: #1e1e1e !important; color: #e4e7ed; }
+html.theme-dark .el-descriptions__cell { background: var(--panel-bg) !important; }
+
 html, body, #app {
   margin: 0;
   padding: 0;

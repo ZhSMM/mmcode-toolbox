@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import SideMenu from './SideMenu.vue';
+import CommandPalette from '@/components/common/CommandPalette.vue';
 import { useAppStore } from '@/stores/app';
 
 const route = useRoute();
 const router = useRouter();
 const appStore = useAppStore();
 
-// 监听路由,把当前工具 ID 写入 store(供工具页判断是否收藏、给历史页过滤用)
 watch(
   () => route.path,
   (path) => {
@@ -19,12 +19,36 @@ watch(
   { immediate: true }
 );
 
-const headerTitle = computed(() => {
-  return (route.meta?.title as string) ?? 'Mavis Code Toolbox';
-});
+const headerTitle = computed(() => (route.meta?.title as string) ?? 'Mavis Code Toolbox');
 
 const goHome = () => router.push({ name: 'home' });
 const goSettings = () => router.push({ name: 'settings' });
+
+// 命令面板
+const commandPaletteRef = ref<InstanceType<typeof CommandPalette> | null>(null);
+const openPalette = () => commandPaletteRef.value?.open();
+
+// 主题
+const theme = ref<'system' | 'light' | 'dark'>((localStorage.getItem('mmcode-theme') as any) || 'system');
+const cycleTheme = () => {
+  const order: Array<'system' | 'light' | 'dark'> = ['system', 'light', 'dark'];
+  const i = order.indexOf(theme.value);
+  theme.value = order[(i + 1) % order.length];
+  applyTheme(theme.value);
+};
+const applyTheme = (mode: 'system' | 'light' | 'dark') => {
+  localStorage.setItem('mmcode-theme', mode);
+  const el = document.documentElement;
+  el.classList.remove('theme-light', 'theme-dark');
+  if (mode === 'light') el.classList.add('theme-light');
+  else if (mode === 'dark') el.classList.add('theme-dark');
+  else {
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    el.classList.add(dark ? 'theme-dark' : 'theme-light');
+  }
+};
+const themeIcon = computed(() => theme.value === 'dark' ? 'Moon' : theme.value === 'light' ? 'Sunny' : 'Sunny');
+const themeLabel = computed(() => theme.value === 'system' ? '跟随系统' : theme.value === 'light' ? '浅色' : '深色');
 </script>
 
 <template>
@@ -46,8 +70,20 @@ const goSettings = () => router.push({ name: 'settings' });
           </el-breadcrumb>
         </div>
         <div class="app-header__actions">
-          <el-button text @click="goHome" :icon="'HomeFilled'" />
-          <el-button text @click="goSettings" :icon="'Setting'" />
+          <el-tooltip content="命令面板 (Cmd/Ctrl+K)">
+            <el-button text @click="openPalette" :icon="'Search'" />
+          </el-tooltip>
+          <el-tooltip :content="`主题:${themeLabel} (点击切换)`">
+            <el-button text @click="cycleTheme">
+              <el-icon><component :is="themeIcon" /></el-icon>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="回到首页">
+            <el-button text @click="goHome" :icon="'HomeFilled'" />
+          </el-tooltip>
+          <el-tooltip content="设置">
+            <el-button text @click="goSettings" :icon="'Setting'" />
+          </el-tooltip>
         </div>
       </header>
 
@@ -59,6 +95,8 @@ const goSettings = () => router.push({ name: 'settings' });
         </router-view>
       </section>
     </main>
+
+    <CommandPalette ref="commandPaletteRef" />
   </div>
 </template>
 
