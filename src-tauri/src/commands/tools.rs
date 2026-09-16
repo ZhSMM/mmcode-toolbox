@@ -71,9 +71,8 @@ pub static TOOLS: Lazy<Vec<ToolMeta>> = Lazy::new(|| {
         ToolMeta { tool_id: "random".into(),         name: "随机数 / 抽样".into(), category: "generator".into(), route: "/tools/random".into(),       icon: Some("Dice".into()),         sort_order: 45, enabled: true },
 
         // ===== 数据 =====
-        ToolMeta { tool_id: "json-fmt".into(),       name: "JSON".into(),         category: "data".into(),   route: "/tools/json-fmt".into(),       icon: Some("Document".into()),     sort_order: 51, enabled: true },
-        ToolMeta { tool_id: "csv-viewer".into(),     name: "CSV 工具".into(),     category: "data".into(),   route: "/tools/csv-viewer".into(),     icon: Some("Grid".into()),         sort_order: 52, enabled: true },
-        ToolMeta { tool_id: "sql-format".into(),     name: "SQL 格式化".into(),   category: "data".into(),   route: "/tools/sql-format".into(),     icon: Some("Coin".into()),         sort_order: 53, enabled: true },
+        ToolMeta { tool_id: "csv-viewer".into(),     name: "CSV 工具".into(),     category: "data".into(),   route: "/tools/csv-viewer".into(),     icon: Some("Grid".into()),         sort_order: 51, enabled: true },
+        ToolMeta { tool_id: "sql-format".into(),     name: "SQL 格式化".into(),   category: "data".into(),   route: "/tools/sql-format".into(),     icon: Some("Coin".into()),         sort_order: 52, enabled: true },
 
         // ===== Web / 编码 =====
         ToolMeta { tool_id: "markdown".into(),       name: "Markdown 预览".into(), category: "web".into(),    route: "/tools/markdown".into(),       icon: Some("Memo".into()),         sort_order: 61, enabled: true },
