@@ -1,7 +1,7 @@
 {
   "name": "mmcode-toolbox",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Mavis Code Toolbox - 开发者桌面工具集 (Rust + Tauri + Vue3 + SQLite + Element Plus)",
   "scripts": {
