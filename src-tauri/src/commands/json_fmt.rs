@@ -6,6 +6,7 @@ use serde::Deserialize;
 use serde_json::Value;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct JsonReq {
@@ -31,6 +32,8 @@ pub struct JsonResp {
 /// 格式化（pretty print）。
 #[tauri::command]
 pub fn json_format(req: JsonReq) -> AppResult<JsonResp> {
+        log_and_run("json_format", "json_fmt", || {
+
     let started = std::time::Instant::now();
     let input = req.input.trim();
     if input.is_empty() {
@@ -70,11 +73,15 @@ pub fn json_format(req: JsonReq) -> AppResult<JsonResp> {
         output,
         duration_ms: started.elapsed().as_millis(),
     })
-}
+
+        })
+    }
 
 /// 压缩（minify）。
 #[tauri::command]
 pub fn json_minify(req: JsonReq) -> AppResult<JsonResp> {
+        log_and_run("json_minify", "json_fmt", || {
+
     let started = std::time::Instant::now();
     let input = req.input.trim();
     if input.is_empty() {
@@ -95,7 +102,9 @@ pub fn json_minify(req: JsonReq) -> AppResult<JsonResp> {
         output,
         duration_ms: started.elapsed().as_millis(),
     })
-}
+
+        })
+    }
 
 /// 递归对 Object 的键排序。
 fn sort_value_keys(v: &mut Value) {

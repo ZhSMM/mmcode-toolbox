@@ -4,6 +4,7 @@ use md5::{Md5, Digest};
 use serde::Deserialize;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct HashReq {
@@ -24,6 +25,8 @@ fn finish_hex<D: Digest>(mut d: D) -> String {
 
 #[tauri::command]
 pub fn md5_hash(req: HashReq) -> AppResult<HashResp> {
+        log_and_run("md5_hash", "md5", || {
+
     use md5::Digest;
     let hasher = Md5::new();
     let bytes = hasher.chain_update(req.input.as_bytes()).finalize();
@@ -32,4 +35,6 @@ pub fn md5_hash(req: HashReq) -> AppResult<HashResp> {
         base64: base64::Engine::encode(&base64::engine::general_purpose::STANDARD, bytes),
         bytes: bytes.to_vec(),
     })
-}
+
+        })
+    }

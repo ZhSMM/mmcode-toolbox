@@ -8,6 +8,7 @@ use rand::{Rng, RngCore, SeedableRng, rngs::StdRng};
 use serde::Deserialize;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 enum RngHolder {
     Seeded(StdRng),
@@ -54,6 +55,8 @@ pub struct RandomResp {
 
 #[tauri::command]
 pub fn random_generate(req: RandomReq) -> AppResult<RandomResp> {
+        log_and_run("random_generate", "random", || {
+
     let count = req.count.unwrap_or(1);
     let mut rng = if let Some(s) = req.seed {
         RngHolder::Seeded(StdRng::seed_from_u64(s))
@@ -117,4 +120,6 @@ pub fn random_generate(req: RandomReq) -> AppResult<RandomResp> {
         other => return Err(crate::error::AppError::Invalid(format!("未知 mode: {other}"))),
     }
     Ok(RandomResp { results, description: desc })
-}
+
+        })
+    }

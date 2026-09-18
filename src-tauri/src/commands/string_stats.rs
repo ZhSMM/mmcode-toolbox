@@ -4,6 +4,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct StringStatsReq {
@@ -32,6 +33,8 @@ pub struct StringStatsResp {
 
 #[tauri::command]
 pub fn string_stats(req: StringStatsReq) -> AppResult<StringStatsResp> {
+        log_and_run("string_stats", "string-stats", || {
+
     let s = &req.input;
 
     let chars = s.chars().count();
@@ -102,4 +105,6 @@ pub fn string_stats(req: StringStatsReq) -> AppResult<StringStatsResp> {
         chinese_chars: chinese, ascii_chars: ascii, digits, spaces,
         top_words: top, byte_distribution,
     })
-}
+
+        })
+    }

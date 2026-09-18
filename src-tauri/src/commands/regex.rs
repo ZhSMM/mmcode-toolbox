@@ -4,6 +4,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct RegexReq {
@@ -51,6 +52,8 @@ fn build_regex(pattern: &str, flags: &[String]) -> Result<Regex, String> {
 
 #[tauri::command]
 pub fn regex_test(req: RegexReq) -> AppResult<RegexResp> {
+        log_and_run("regex_test", "regex-tester", || {
+
     let re = match build_regex(&req.pattern, &req.flags) {
         Ok(r) => r,
         Err(e) => {
@@ -78,10 +81,16 @@ pub fn regex_test(req: RegexReq) -> AppResult<RegexResp> {
         });
     }
     Ok(RegexResp { valid: true, error: None, matches: out })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn regex_replace(pattern: String, input: String, replacement: String, flags: Vec<String>) -> AppResult<String> {
+        log_and_run("regex_replace", "regex-tester", || {
+
     let re = build_regex(&pattern, &flags).map_err(AppError::Invalid)?;
     Ok(re.replace_all(&input, replacement.as_str()).into_owned())
-}
+
+        })
+    }

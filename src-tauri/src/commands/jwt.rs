@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct JwtDecodeReq {
@@ -49,6 +50,8 @@ fn b64url_encode(bytes: &[u8]) -> String {
 
 #[tauri::command]
 pub fn jwt_decode(req: JwtDecodeReq) -> AppResult<JwtDecodeResp> {
+        log_and_run("jwt_decode", "jwt", || {
+
     let token = req.token.trim();
     let parts: Vec<&str> = token.split('.').collect();
     if parts.len() != 3 {
@@ -128,7 +131,9 @@ pub fn jwt_decode(req: JwtDecodeReq) -> AppResult<JwtDecodeResp> {
         verified,
         error: verify_err,
     })
-}
+
+        })
+    }
 
 #[cfg(test)]
 mod tests {

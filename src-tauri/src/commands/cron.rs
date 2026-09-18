@@ -8,6 +8,7 @@ use serde::Deserialize;
 use std::str::FromStr;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Clone, PartialEq)]
 enum CronField {
@@ -148,6 +149,8 @@ pub struct CronResp {
 
 #[tauri::command]
 pub fn cron_next(req: CronReq) -> AppResult<CronResp> {
+        log_and_run("cron_next", "cron", || {
+
     let expr: CronExpr = match req.expression.parse() {
         Ok(e) => e,
         Err(e) => return Ok(CronResp { valid: false, error: Some(e.to_string()), next_runs: vec![] }),
@@ -169,4 +172,6 @@ pub fn cron_next(req: CronReq) -> AppResult<CronResp> {
         }
     }
     Ok(CronResp { valid: true, error: None, next_runs: runs })
-}
+
+        })
+    }

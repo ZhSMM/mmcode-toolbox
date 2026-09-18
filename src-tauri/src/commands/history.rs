@@ -3,6 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 use crate::state::AppState;
 
 const INPUT_MAX: usize = 16 * 1024;     // 16KB
@@ -49,6 +50,8 @@ fn truncate(s: &Option<String>, max: usize) -> Option<String> {
 
 #[tauri::command]
 pub fn save_history(state: tauri::State<'_, AppState>, req: SaveHistoryReq) -> AppResult<i64> {
+        log_and_run_sys("save_history", || {
+
     if req.tool_id.is_empty() {
         return Err(AppError::Invalid("tool_id 不能为空".into()));
     }
@@ -71,7 +74,9 @@ pub fn save_history(state: tauri::State<'_, AppState>, req: SaveHistoryReq) -> A
         )?;
         Ok(conn.last_insert_rowid())
     })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn list_history(
@@ -102,11 +107,15 @@ pub fn list_history(
 
 #[tauri::command]
 pub fn delete_history(state: tauri::State<'_, AppState>, id: i64) -> AppResult<()> {
+        log_and_run_sys("delete_history", || {
+
     state.with_db(|conn| {
         conn.execute("DELETE FROM history WHERE id = ?1", rusqlite::params![id])?;
         Ok(())
     })
-}
+
+        })
+    }
 
 #[derive(Debug, Deserialize)]
 pub struct ClearHistoryReq {
@@ -116,6 +125,8 @@ pub struct ClearHistoryReq {
 
 #[tauri::command]
 pub fn clear_history(state: tauri::State<'_, AppState>, req: ClearHistoryReq) -> AppResult<()> {
+        log_and_run_sys("clear_history", || {
+
     state.with_db(|conn| {
         match req.tool_id {
             Some(tid) => {
@@ -127,4 +138,6 @@ pub fn clear_history(state: tauri::State<'_, AppState>, req: ClearHistoryReq) ->
         }
         Ok(())
     })
-}
+
+        })
+    }

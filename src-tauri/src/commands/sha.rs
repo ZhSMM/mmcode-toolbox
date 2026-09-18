@@ -5,6 +5,7 @@ use sha1::{Sha1, Digest as _};
 use sha2::{Sha256, Sha512};
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct ShaReq {
@@ -24,6 +25,8 @@ pub struct ShaResp {
 
 #[tauri::command]
 pub fn sha_hash(req: ShaReq) -> AppResult<ShaResp> {
+        log_and_run("sha_hash", "sha", || {
+
     let bytes = match req.algorithm.as_str() {
         "sha1" => Sha1::digest(req.input.as_bytes()).to_vec(),
         "sha256" => Sha256::digest(req.input.as_bytes()).to_vec(),
@@ -33,4 +36,6 @@ pub fn sha_hash(req: ShaReq) -> AppResult<ShaResp> {
     let hex = if req.uppercase { hex::encode(&bytes).to_uppercase() } else { hex::encode(&bytes) };
     let base64 = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &bytes);
     Ok(ShaResp { hex, base64 })
-}
+
+        })
+    }

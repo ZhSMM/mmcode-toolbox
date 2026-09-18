@@ -4,6 +4,7 @@ use rand::Rng;
 use serde::Deserialize;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct PasswordReq {
@@ -44,6 +45,8 @@ pub struct PasswordResp {
 
 #[tauri::command]
 pub fn password_generate(req: PasswordReq) -> AppResult<PasswordResp> {
+        log_and_run("password_generate", "password", || {
+
     let length = req.length.clamp(4, 256);
     let count = req.count.clamp(1, 50);
     let mut alphabet = String::new();
@@ -85,4 +88,6 @@ pub fn password_generate(req: PasswordReq) -> AppResult<PasswordResp> {
     let entropy = (length as f64) * (alphabet.len() as f64).log2();
     let strength = if entropy < 40.0 { "弱" } else if entropy < 72.0 { "中" } else { "强" }.to_string();
     Ok(PasswordResp { passwords, strength, entropy_bits: (entropy * 10.0).round() / 10.0 })
-}
+
+        })
+    }

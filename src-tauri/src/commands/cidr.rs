@@ -6,6 +6,7 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use std::str::FromStr;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct CidrReq {
@@ -91,6 +92,8 @@ fn ipv4_sub(a: Ipv4Addr, n: u32) -> Option<Ipv4Addr> {
 
 #[tauri::command]
 pub fn cidr_info(req: CidrReq) -> AppResult<CidrResp> {
+        log_and_run("cidr_info", "cidr", || {
+
     let net = IpNetwork::from_str(&req.input).map_err(|e| AppError::Invalid(format!("非法 CIDR: {e}")))?;
     match net {
         IpNetwork::V4(n) => {
@@ -135,7 +138,9 @@ pub fn cidr_info(req: CidrReq) -> AppResult<CidrResp> {
             })
         }
     }
-}
+
+        })
+    }
 
 #[derive(Debug, Deserialize)]
 pub struct IpLookupReq {
@@ -157,6 +162,8 @@ pub struct IpLookupResp {
 
 #[tauri::command]
 pub fn ip_info(req: IpLookupReq) -> AppResult<IpLookupResp> {
+        log_and_run("ip_info", "cidr", || {
+
     let ip = IpAddr::from_str(&req.ip).map_err(|e| AppError::Invalid(format!("非法 IP: {e}")))?;
     let (version, is_private, is_loopback, is_link_local, is_multicast, is_unspecified, is_documentation) = match ip {
         IpAddr::V4(v) => (
@@ -199,4 +206,6 @@ pub fn ip_info(req: IpLookupReq) -> AppResult<IpLookupResp> {
         ip: ip.to_string(), version, is_private, is_loopback, is_link_local, is_multicast, is_unspecified, is_documentation,
         reverse_dns_hint: rdns,
     })
-}
+
+        })
+    }

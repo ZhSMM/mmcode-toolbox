@@ -4,6 +4,7 @@ use serde::Deserialize;
 use similar::{ChangeTag, TextDiff};
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct DiffReq {
@@ -38,6 +39,8 @@ pub struct DiffStats {
 
 #[tauri::command]
 pub fn diff_text(req: DiffReq) -> AppResult<DiffResp> {
+        log_and_run("diff_text", "diff", || {
+
     if req.left.is_empty() && req.right.is_empty() {
         return Err(AppError::Invalid("两侧输入均为空".into()));
     }
@@ -65,4 +68,6 @@ pub fn diff_text(req: DiffReq) -> AppResult<DiffResp> {
     stats.left_lines = req.left.lines().count();
     stats.right_lines = req.right.lines().count();
     Ok(DiffResp { hunks, stats })
-}
+
+        })
+    }

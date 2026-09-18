@@ -1,6 +1,7 @@
 //! 收藏。
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 use crate::state::AppState;
 
 #[tauri::command]
@@ -14,6 +15,8 @@ pub fn list_favorites(state: tauri::State<'_, AppState>) -> AppResult<Vec<String
 
 #[tauri::command]
 pub fn toggle_favorite(state: tauri::State<'_, AppState>, tool_id: String) -> AppResult<bool> {
+        log_and_run_sys("toggle_favorite", || {
+
     if tool_id.is_empty() {
         return Err(crate::error::AppError::Invalid("tool_id 不能为空".into()));
     }
@@ -37,4 +40,6 @@ pub fn toggle_favorite(state: tauri::State<'_, AppState>, tool_id: String) -> Ap
             Ok(true)
         }
     })
-}
+
+        })
+    }

@@ -3,6 +3,7 @@
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct CsvParseReq {
@@ -44,6 +45,8 @@ fn detect_delimiter(text: &str) -> char {
 
 #[tauri::command]
 pub fn csv_parse(req: CsvParseReq) -> AppResult<CsvParseResp> {
+        log_and_run("csv_parse", "csv-viewer", || {
+
     if req.input.is_empty() {
         return Err(AppError::Invalid("输入为空".into()));
     }
@@ -103,7 +106,9 @@ pub fn csv_parse(req: CsvParseReq) -> AppResult<CsvParseResp> {
         headers, rows, total_rows: total, column_count,
         delimiter: delim, stats,
     })
-}
+
+        })
+    }
 
 #[derive(Debug, Deserialize)]
 pub struct CsvExtractReq {
@@ -121,6 +126,8 @@ pub struct CsvExtractResp {
 
 #[tauri::command]
 pub fn csv_extract_column(req: CsvExtractReq) -> AppResult<CsvExtractResp> {
+        log_and_run("csv_extract_column", "csv-viewer", || {
+
     let delim = req.delimiter.unwrap_or_else(|| detect_delimiter(&req.input));
     let mut rdr = csv::ReaderBuilder::new()
         .delimiter(delim as u8)
@@ -139,4 +146,6 @@ pub fn csv_extract_column(req: CsvExtractReq) -> AppResult<CsvExtractResp> {
         if let Some(v) = rec.get(req.column_index) { values.push(v.to_string()); }
     }
     Ok(CsvExtractResp { column_name, values })
-}
+
+        })
+    }

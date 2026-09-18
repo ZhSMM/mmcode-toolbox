@@ -7,6 +7,7 @@ use base64::{engine::general_purpose::GeneralPurpose, Engine as _};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct Base64Req {
@@ -30,6 +31,8 @@ fn pick_engine(url_safe: bool) -> GeneralPurpose {
 
 #[tauri::command]
 pub fn base64_encode(req: Base64Req) -> AppResult<Base64Resp> {
+        log_and_run("base64_encode", "base64", || {
+
     if req.input.len() > 4 * 1024 * 1024 {
         return Err(AppError::Invalid("输入超过 4MB 上限".into()));
     }
@@ -37,10 +40,14 @@ pub fn base64_encode(req: Base64Req) -> AppResult<Base64Resp> {
     Ok(Base64Resp {
         output: engine.encode(req.input.as_bytes()),
     })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn base64_decode(req: Base64Req) -> AppResult<Base64Resp> {
+        log_and_run("base64_decode", "base64", || {
+
     if req.input.len() > 8 * 1024 * 1024 {
         return Err(AppError::Invalid("输入超过 8MB 上限".into()));
     }
@@ -51,7 +58,9 @@ pub fn base64_decode(req: Base64Req) -> AppResult<Base64Resp> {
     let output = String::from_utf8(bytes)
         .map_err(|e| AppError::Invalid(format!("解码结果不是合法 UTF-8: {e}")))?;
     Ok(Base64Resp { output })
-}
+
+        })
+    }
 
 #[cfg(test)]
 mod tests {

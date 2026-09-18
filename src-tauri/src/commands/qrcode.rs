@@ -5,6 +5,7 @@ use qrcode::QrCode;
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct QrCodeReq {
@@ -26,6 +27,8 @@ pub struct QrCodeResp {
 
 #[tauri::command]
 pub fn qrcode_generate(req: QrCodeReq) -> AppResult<QrCodeResp> {
+        log_and_run("qrcode_generate", "qrcode", || {
+
     if req.input.is_empty() {
         return Err(AppError::Invalid("内容不能为空".into()));
     }
@@ -42,4 +45,6 @@ pub fn qrcode_generate(req: QrCodeReq) -> AppResult<QrCodeResp> {
         modules: code.width() as u32,
         version: format!("{:?}", code.version()),
     })
-}
+
+        })
+    }

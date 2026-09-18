@@ -4,6 +4,7 @@ use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 /// 应用到查询字符串的字符集(空格 → %20)。
 /// RFC 3986 unreserved 字符集 = ALPHA / DIGIT / "-" / "." / "_" / "~"
@@ -38,6 +39,8 @@ pub struct UrlCodecResp {
 
 #[tauri::command]
 pub fn url_encode(req: UrlCodecReq) -> AppResult<UrlCodecResp> {
+        log_and_run("url_encode", "url-codec", || {
+
     if req.input.is_empty() {
         return Err(AppError::Invalid("输入为空".into()));
     }
@@ -47,17 +50,23 @@ pub fn url_encode(req: UrlCodecReq) -> AppResult<UrlCodecResp> {
         _ => return Err(AppError::Invalid(format!("未知 mode: {}", req.mode))),
     };
     Ok(UrlCodecResp { output: utf8_percent_encode(&req.input, set).to_string() })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn url_decode(req: UrlCodecReq) -> AppResult<UrlCodecResp> {
+        log_and_run("url_decode", "url-codec", || {
+
     if req.input.is_empty() {
         return Err(AppError::Invalid("输入为空".into()));
     }
     let bytes = percent_encoding::percent_decode_str(&req.input).decode_utf8()
         .map_err(|e| AppError::Invalid(format!("百分号编码非法: {e}")))?;
     Ok(UrlCodecResp { output: bytes.into_owned() })
-}
+
+        })
+    }
 
 #[cfg(test)]
 mod tests {

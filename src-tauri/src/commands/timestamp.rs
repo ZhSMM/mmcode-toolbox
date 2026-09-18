@@ -4,6 +4,7 @@ use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Utc};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct TimestampParseReq {
@@ -28,6 +29,8 @@ pub struct TimestampParseResp {
 
 #[tauri::command]
 pub fn timestamp_parse(req: TimestampParseReq) -> AppResult<TimestampParseResp> {
+        log_and_run("timestamp_parse", "timestamp", || {
+
     let v: i64 = req.input.trim().parse()
         .map_err(|e| AppError::Invalid(format!("非法时间戳: {e}")))?;
     let ms = match req.unit.as_str() {
@@ -49,7 +52,9 @@ pub fn timestamp_parse(req: TimestampParseReq) -> AppResult<TimestampParseResp> 
         timezone_offset: local.format("%:z").to_string(),
         weekday: wd.to_string(),
     })
-}
+
+        })
+    }
 
 #[derive(Debug, Deserialize)]
 pub struct TimestampToReq {
@@ -67,6 +72,8 @@ pub struct TimestampToResp {
 
 #[tauri::command]
 pub fn timestamp_to(req: TimestampToReq) -> AppResult<TimestampToResp> {
+        log_and_run("timestamp_to", "timestamp", || {
+
     let s = req.input.trim();
     // 尝试 RFC3339 / ISO8601
     if let Ok(dt) = DateTime::parse_from_rfc3339(s) {
@@ -86,7 +93,9 @@ pub fn timestamp_to(req: TimestampToReq) -> AppResult<TimestampToResp> {
         }
     }
     Err(AppError::Invalid(format!("无法解析日期: {s}")))
-}
+
+        })
+    }
 
 #[derive(Debug, serde::Serialize)]
 pub struct NowResp {

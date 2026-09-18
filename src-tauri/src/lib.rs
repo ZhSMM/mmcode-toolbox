@@ -10,11 +10,13 @@
 
 use std::sync::Mutex;
 
+use log::Level;
 use tauri::Manager;
 
 mod commands;
 mod db;
 mod error;
+mod logging;
 mod state;
 
 use crate::error::AppResult;
@@ -22,9 +24,35 @@ use crate::state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // 初始化日志（仅一次）
-    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .try_init();
+    // 初始化日志:详细格式(时间戳 + 级别 + target),彩色输出。
+    // 通过 RUST_LOG 环境变量控制级别,例如:
+    //   RUST_LOG=debug pnpm tauri:dev      # 打印所有 debug
+    //   RUST_LOG=mmcode_toolbox_lib=debug  # 仅本项目 debug
+    let _ = env_logger::Builder::from_env(
+        env_logger::Env::default().default_filter_or("info"),
+    )
+    .format(|buf, record| {
+        use std::io::Write;
+        let ts = chrono::Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
+        let level_color = match record.level() {
+            Level::Error => "\x1b[31m",  // 红
+            Level::Warn  => "\x1b[33m",  // 黄
+            Level::Info  => "\x1b[32m",  // 绿
+            Level::Debug => "\x1b[36m",  // 青
+            Level::Trace => "\x1b[37m",  // 灰
+        };
+        let reset = "\x1b[0m";
+        writeln!(
+            buf,
+            "{ts} {level_color}{level:>5}{reset} [{target}] {msg}",
+            level = record.level(),
+            target = record.target(),
+            msg = record.args(),
+        )
+    })
+    .try_init();
+
+    log::info!("=== Mavis Code Toolbox starting ===");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -45,6 +73,7 @@ pub fn run() {
                 .map_err(|e| format!("初始化数据库失败: {e}"))?;
             db::seed_tools(&conn)
                 .map_err(|e| format!("seed 工具元数据失败: {e}"))?;
+            log::info!("数据库就绪");
 
             // 注入全局 state
             app.manage(AppState {

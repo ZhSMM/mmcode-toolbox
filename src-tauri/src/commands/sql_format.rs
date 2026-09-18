@@ -3,6 +3,7 @@
 use serde::Deserialize;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct SqlFormatReq {
@@ -25,6 +26,8 @@ pub struct SqlFormatResp {
 
 #[tauri::command]
 pub fn sql_format(req: SqlFormatReq) -> AppResult<SqlFormatResp> {
+        log_and_run("sql_format", "sql-format", || {
+
     let mut options = sqlformat::FormatOptions::default();
     options.indent = sqlformat::Indent::Spaces(req.indent.clamp(1, 8) as u8);
     options.uppercase = req.uppercase;
@@ -40,4 +43,6 @@ pub fn sql_format(req: SqlFormatReq) -> AppResult<SqlFormatResp> {
     };
     let line_count = if output.is_empty() { 0 } else { output.matches('\n').count() + 1 };
     Ok(SqlFormatResp { output, line_count })
-}
+
+        })
+    }

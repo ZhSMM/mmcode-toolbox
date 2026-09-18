@@ -4,6 +4,7 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct UuidReq {
@@ -26,6 +27,8 @@ pub struct UuidResp {
 
 #[tauri::command]
 pub fn uuid_generate(req: UuidReq) -> AppResult<UuidResp> {
+        log_and_run("uuid_generate", "uuid", || {
+
     let count = req.count.clamp(1, 1000);
     let mut items = Vec::with_capacity(count);
     for _ in 0..count {
@@ -39,4 +42,6 @@ pub fn uuid_generate(req: UuidReq) -> AppResult<UuidResp> {
         items.push(if req.uppercase { s.to_uppercase() } else { s });
     }
     Ok(UuidResp { items })
-}
+
+        })
+    }

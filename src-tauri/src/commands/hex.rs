@@ -8,6 +8,7 @@
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct HexReq {
@@ -27,24 +28,34 @@ pub struct HexResp {
 
 #[tauri::command]
 pub fn hex_encode(req: HexReq) -> AppResult<HexResp> {
+        log_and_run("hex_encode", "hex", || {
+
     let bytes = req.input.as_bytes();
     let mut s = hex::encode(bytes);
     if req.uppercase { s = s.to_uppercase(); }
     Ok(HexResp { output: s })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn hex_decode(req: HexReq) -> AppResult<HexResp> {
+        log_and_run("hex_decode", "hex", || {
+
     let cleaned: String = req.input.chars().filter(|c| !c.is_whitespace()).collect();
     let bytes = hex::decode(&cleaned)
         .map_err(|e| AppError::Invalid(format!("非法 hex: {e}")))?;
     let s = String::from_utf8(bytes)
         .map_err(|e| AppError::Invalid(format!("解码后不是合法 UTF-8: {e}")))?;
     Ok(HexResp { output: s })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn hex_dump(req: HexReq) -> AppResult<HexResp> {
+        log_and_run("hex_dump", "hex", || {
+
     let bytes = req.input.as_bytes();
     let mut out = String::new();
     for (i, chunk) in bytes.chunks(16).enumerate() {
@@ -69,7 +80,9 @@ pub fn hex_dump(req: HexReq) -> AppResult<HexResp> {
         out.push_str(&line);
     }
     Ok(HexResp { output: out })
-}
+
+        })
+    }
 
 #[cfg(test)]
 mod tests {

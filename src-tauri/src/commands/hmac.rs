@@ -5,6 +5,7 @@ use serde::Deserialize;
 use sha2::{Sha256, Sha512};
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct HmacReq {
@@ -25,6 +26,8 @@ pub struct HmacResp {
 
 #[tauri::command]
 pub fn hmac_hash(req: HmacReq) -> AppResult<HmacResp> {
+        log_and_run("hmac_hash", "hmac", || {
+
     let bytes = match req.algorithm.as_str() {
         "hmac-sha256" => {
             type H = Hmac<Sha256>;
@@ -45,4 +48,6 @@ pub fn hmac_hash(req: HmacReq) -> AppResult<HmacResp> {
     let hex = if req.uppercase { hex::encode(&bytes).to_uppercase() } else { hex::encode(&bytes) };
     let base64 = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &bytes);
     Ok(HmacResp { hex, base64 })
-}
+
+        })
+    }

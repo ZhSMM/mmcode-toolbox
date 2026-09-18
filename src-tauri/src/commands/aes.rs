@@ -10,6 +10,7 @@ use rand::RngCore;
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct AesReq {
@@ -40,6 +41,8 @@ fn aad_bytes(req: &AesReq) -> Result<Vec<u8>, AppError> {
 
 #[tauri::command]
 pub fn aes_encrypt(req: AesReq) -> AppResult<AesResp> {
+        log_and_run("aes_encrypt", "aes", || {
+
     let key_bytes = parse_hex_bytes(&req.key_hex, "key")?;
     if key_bytes.len() != 32 {
         return Err(AppError::Invalid(format!("key 长度需 32 字节,实际 {}", key_bytes.len())));
@@ -66,10 +69,14 @@ pub fn aes_encrypt(req: AesReq) -> AppResult<AesResp> {
     out.extend_from_slice(&nonce_bytes);
     out.extend_from_slice(&ciphertext);
     Ok(AesResp { output: hex::encode(out) })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn aes_decrypt(req: AesReq) -> AppResult<AesResp> {
+        log_and_run("aes_decrypt", "aes", || {
+
     let key_bytes = parse_hex_bytes(&req.key_hex, "key")?;
     if key_bytes.len() != 32 {
         return Err(AppError::Invalid(format!("key 长度需 32 字节,实际 {}", key_bytes.len())));
@@ -101,7 +108,9 @@ pub fn aes_decrypt(req: AesReq) -> AppResult<AesResp> {
     let s = String::from_utf8(plaintext)
         .map_err(|e| AppError::Invalid(format!("明文不是合法 UTF-8: {e}")))?;
     Ok(AesResp { output: s })
-}
+
+        })
+    }
 
 #[tauri::command]
 pub fn aes_random_key() -> AesResp {

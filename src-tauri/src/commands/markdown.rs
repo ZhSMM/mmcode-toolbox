@@ -4,6 +4,7 @@ use pulldown_cmark::{html, Options, Parser};
 use serde::Deserialize;
 
 use crate::error::AppResult;
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct MarkdownReq {
@@ -28,6 +29,8 @@ pub struct MarkdownResp {
 
 #[tauri::command]
 pub fn markdown_render(req: MarkdownReq) -> AppResult<MarkdownResp> {
+        log_and_run("markdown_render", "markdown", || {
+
     let mut opts = Options::empty();
     if req.enable_tables { opts.insert(Options::ENABLE_TABLES); }
     if req.enable_footnotes { opts.insert(Options::ENABLE_FOOTNOTES); }
@@ -44,7 +47,9 @@ pub fn markdown_render(req: MarkdownReq) -> AppResult<MarkdownResp> {
         byte_size: req.input.len(),
         line_count,
     })
-}
+
+        })
+    }
 
 #[cfg(test)]
 mod tests {

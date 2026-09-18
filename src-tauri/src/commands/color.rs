@@ -3,6 +3,7 @@
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
+use crate::logging::{log_and_run, log_and_run_sys};
 
 #[derive(Debug, Deserialize)]
 pub struct ColorReq {
@@ -131,6 +132,8 @@ fn contrast_ratio(l1: f64, l2: f64) -> f64 {
 
 #[tauri::command]
 pub fn color_convert(req: ColorReq) -> AppResult<ColorResp> {
+        log_and_run("color_convert", "color", || {
+
     let (r, g, b, a) = match req.from.as_str() {
         "hex" => parse_hex(&req.input)?,
         "rgb" => parse_rgb(&req.input)?,
@@ -151,4 +154,6 @@ pub fn color_convert(req: ColorReq) -> AppResult<ColorResp> {
         contrast_white: (cw * 100.0).round() / 100.0,
         contrast_black: (cb * 100.0).round() / 100.0,
     })
-}
+
+        })
+    }
