@@ -26,15 +26,21 @@ const exportFavorites = async () => {
 
 const importFavorites = async () => {
   try {
-    const raw = await ElMessageBox.prompt('粘贴导出的收藏 JSON', '导入收藏', {
-      inputType: 'textarea',
-      inputPlaceholder: '{"type":"mmcode-favorites", ...}',
-      inputValue: '',
-      confirmButtonText: '导入',
-    });
+    const raw = await ElMessageBox.prompt(
+      '粘贴之前导出的收藏 JSON(格式: {"type":"mmcode-favorites","tool_ids":[...]})',
+      '导入收藏',
+      {
+        inputType: 'textarea',
+        inputPlaceholder: '{"type":"mmcode-favorites", "tool_ids": [...]}',
+        inputValue: '',
+        confirmButtonText: '导入',
+        cancelButtonText: '取消',
+        customStyle: { maxWidth: '520px' },
+      }
+    );
     const data = JSON.parse(raw.value);
     if (data.type !== 'mmcode-favorites' || !Array.isArray(data.tool_ids)) {
-      ElMessage.error('格式不合法');
+      ElMessage.error('JSON 格式不合法(缺少 type 或 tool_ids)');
       return;
     }
     const validIds = new Set(appStore.tools.map((t) => t.tool_id));
@@ -49,24 +55,34 @@ const importFavorites = async () => {
       }
     }
     appStore.favorites = new Set(appStore.favorites);
-    ElMessage.success(`导入完成: +${added} 项,跳过 ${skipped} 项无效`);
+    ElMessage.success(`导入完成: 新增 ${added} 项${skipped ? `, 跳过 ${skipped} 项无效` : ''}`);
   } catch (e: any) {
-    if (e === 'cancel') return;
+    // Element Plus reject 字符串 'cancel' / 'close'
+    if (e === 'cancel' || e === 'close') return;
     if (e instanceof SyntaxError) { ElMessage.error('JSON 解析失败'); return; }
-    ElMessage.error('导入失败: ' + (e?.message ?? e));
+    ElMessage.error('导入失败: ' + (e?.message ?? String(e)));
   }
 };
 
 const clearAllHistory = async () => {
   try {
-    await ElMessageBox.confirm('将清空全部工具的历史记录,且不可恢复,确定？', '清空全部历史', {
-      type: 'warning', confirmButtonText: '确认清空', cancelButtonText: '取消',
-    });
+    await ElMessageBox.confirm(
+      '将清空全部工具的历史记录,且不可恢复。',
+      '清空全部历史',
+      {
+        type: 'warning',
+        confirmButtonText: '确认清空',
+        cancelButtonText: '取消',
+        confirmButtonClass: 'el-button--danger',
+        customStyle: { maxWidth: '380px' },
+      }
+    );
     await historyApi.clearHistory();
     ElMessage.success('已清空全部历史');
   } catch (e: any) {
-    if (e === 'cancel') return;
-    ElMessage.error('清空失败: ' + (e?.message ?? e));
+    // Element Plus 在点 X / Esc / 取消时 reject 字符串 'cancel' / 'close'
+    if (e === 'cancel' || e === 'close') return;
+    ElMessage.error('清空失败: ' + (e?.message ?? String(e)));
   }
 };
 
