@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct JwtDecodeReq {
@@ -42,10 +42,6 @@ fn b64url_decode(s: &str) -> Result<Vec<u8>, AppError> {
     let mut t = s.replace('-', "+").replace('_', "/");
     while t.len() % 4 != 0 { t.push('='); }
     general_purpose::STANDARD.decode(&t).map_err(|e| AppError::Invalid(format!("base64url: {e}")))
-}
-
-fn b64url_encode(bytes: &[u8]) -> String {
-    general_purpose::URL_SAFE_NO_PAD.encode(bytes)
 }
 
 #[tauri::command]

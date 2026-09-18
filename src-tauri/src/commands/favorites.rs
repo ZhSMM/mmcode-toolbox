@@ -1,7 +1,7 @@
 //! 收藏。
 
 use crate::error::AppResult;
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run_sys;
 use crate::state::AppState;
 
 #[tauri::command]

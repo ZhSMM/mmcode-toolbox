@@ -6,7 +6,7 @@ use serde::Deserialize;
 use serde_json::Value;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct JsonReq {

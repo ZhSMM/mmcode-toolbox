@@ -4,7 +4,7 @@ use data_encoding::{Encoding, BASE32, BASE32HEX, BASE32_NOPAD, BASE32HEX_NOPAD};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 fn pick_encoding(name: &str, no_pad: bool) -> Encoding {
     let n = name.to_ascii_lowercase();

@@ -8,18 +8,14 @@
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct HexReq {
     pub input: String,
-    #[serde(default = "default_mode")]
-    pub mode: String, // "encode" | "decode" | "hexdump"
     #[serde(default)]
     pub uppercase: bool,
 }
-
-fn default_mode() -> String { "encode".to_string() }
 
 #[derive(Debug, serde::Serialize)]
 pub struct HexResp {
@@ -89,14 +85,14 @@ mod tests {
     use super::*;
     #[test]
     fn encode_decode() {
-        let r = hex_encode(HexReq { input: "Hi".into(), mode: "encode".into(), uppercase: false }).unwrap();
+        let r = hex_encode(HexReq { input: "Hi".into(), uppercase: false }).unwrap();
         assert_eq!(r.output, "4869");
-        let d = hex_decode(HexReq { input: "4869".into(), mode: "decode".into(), uppercase: false }).unwrap();
+        let d = hex_decode(HexReq { input: "4869".into(), uppercase: false }).unwrap();
         assert_eq!(d.output, "Hi");
     }
     #[test]
     fn dump() {
-        let r = hex_dump(HexReq { input: "Hello, world!".into(), mode: "hexdump".into(), uppercase: false }).unwrap();
+        let r = hex_dump(HexReq { input: "Hello, world!".into(), uppercase: false }).unwrap();
         // dump 输出带空格(48 65 6c 6c 6f 是 "Hello")
         assert!(r.output.contains("48 65 6c 6c 6f"));
     }

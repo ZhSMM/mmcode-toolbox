@@ -66,17 +66,6 @@ impl CmdTrace {
         }
     }
 
-    pub fn with_input_summary(mut self, summary: impl Into<String>) -> Self {
-        let s: String = summary.into();
-        // 截断到 200 字符,避免日志爆炸
-        self.input_summary = Some(if s.len() > 200 {
-            format!("{}…(+{} chars)", &s[..200], s.len() - 200)
-        } else {
-            s
-        });
-        self
-    }
-
     pub fn ok(mut self) {
         let ms = self.start.elapsed().as_millis();
         log::info!(

@@ -4,7 +4,7 @@ use pulldown_cmark::{html, Options, Parser};
 use serde::Deserialize;
 
 use crate::error::AppResult;
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct MarkdownReq {

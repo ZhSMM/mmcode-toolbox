@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run_sys;
 use crate::state::AppState;
 
 const INPUT_MAX: usize = 16 * 1024;     // 16KB

@@ -4,14 +4,12 @@ use serde::Deserialize;
 use similar::{ChangeTag, TextDiff};
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct DiffReq {
     pub left: String,
     pub right: String,
-    #[serde(default)]
-    pub ignore_whitespace: bool,
 }
 
 #[derive(Debug, serde::Serialize)]

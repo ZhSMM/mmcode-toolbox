@@ -4,15 +4,13 @@ use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Utc};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct TimestampParseReq {
     pub input: String,
     #[serde(default = "default_unit")]
     pub unit: String, // "s" | "ms"
-    #[serde(default)]
-    pub timezone: String, // "local" | "utc"
 }
 fn default_unit() -> String { "ms".to_string() }
 

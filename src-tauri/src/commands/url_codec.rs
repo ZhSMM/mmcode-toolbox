@@ -4,7 +4,7 @@ use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 use serde::Deserialize;
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 /// 应用到查询字符串的字符集(空格 → %20)。
 /// RFC 3986 unreserved 字符集 = ALPHA / DIGIT / "-" / "." / "_" / "~"

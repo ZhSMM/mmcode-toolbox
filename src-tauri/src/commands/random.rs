@@ -8,7 +8,7 @@ use rand::{Rng, RngCore, SeedableRng, rngs::StdRng};
 use serde::Deserialize;
 
 use crate::error::AppResult;
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 enum RngHolder {
     Seeded(StdRng),

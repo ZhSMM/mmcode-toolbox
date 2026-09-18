@@ -5,7 +5,7 @@ use serde::Deserialize;
 use sha2::{Sha256, Sha512};
 
 use crate::error::{AppError, AppResult};
-use crate::logging::{log_and_run, log_and_run_sys};
+use crate::logging::log_and_run;
 
 #[derive(Debug, Deserialize)]
 pub struct HmacReq {
